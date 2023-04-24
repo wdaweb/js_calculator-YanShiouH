@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./animate.css">
+  <title>Document</title>
+  <style>
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      margin: 0;
+    }
+
+    #cal {
+      height: 100%;
+      width: 100%;
+      background: url(./student-back-to-school-supplies.png);
+      background-size: auto 100vh;
+      background-repeat: no-repeat;
+      background-position: center top;
+      overflow: hidden;
+      opacity: 0.9;
+      vertical-align: middle;
+    }
+
+    table {
+      border: none;
+      width: 432px;
+      height: 664px;
+      border-radius: 16px;
+      padding: 20px 24px 36px 24px;
+      margin: auto;
+      margin-top: calc(50vh - 376px);
+      box-shadow: 1px 1px 4px gray;
+      border-spacing: 8px;
+      box-sizing: border-box;
+      backdrop-filter: blur(5px);
+      background-color: rgba(255, 255, 255, 0.8);
+      transition: 2s;
+      font-size: 2rem;
+      table-layout: fixed;
+
+    }
+
+    td {
+      width: 40px;
+      text-align: center;
+      vertical-align: middle;
+      border-radius: 2px;
+      font-family: 'Pacifico', cursive;
+      padding: 0;
+
+    }
+
+    #text {
+      text-align: right;
+    }
+
+    #el2 {
+      background: linear-gradient(rgb(10, 10, 12) 10% 80%, transparent 80%);
+      border: none
+    }
+
+    td:not(#text):not(#clickMe):not(#el2):not(#hr) {
+      border: outset;
+      border-radius: 6px;
+      -webkit-text-stroke: 0.1px black;
+      font-weight: bolder;
+
+    }
+
+    td:not(#text):not(#el2):not(#hr):hover {
+
+      cursor: pointer;
+    }
+
+    .swal2-html-container,
+    .swal2-title,
+    .swal2-confirm {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cal">
+    <table id="table">
+      <tr>
+        <td colspan="2" style="color:rgb(178,229,231);border:none" id="clickMe">Click Me!</td>
+        <td colspan="2" id="el2"></td>
+      </tr>
+      <tr>
+        <td colspan="4" id="text" style="background-color:rgb(138,154,153);border: none" width="176px">0</td>
+      </tr>
+      <tr>
+        <td colspan="4" id="hr" style="height: 1px;">
+          <hr>
+        </td>
+
+      </tr>
+      <tr>
+        <td style="color:rgb(58,191,131)">C</td>
+        <td style="color:rgb(99,224,244)">/</td>
+        <td style="color:rgb(17,78,137)">*</td>
+        <td style="color:rgb(23,81,131)">-</td>
+      </tr>
+      <tr>
+        <td style="color:rgb(1,73,121)">7</td>
+        <td style="color:rgb(249,240,24)">8</td>
+        <td style="color:rgb(247,101,61)">9</td>
+        <td rowspan="2" style="color:rgb(48,203,126)">+</td>
+      </tr>
+      <tr>
+        <td style="color:rgb(255,109,87)">4</td>
+        <td style="color:rgb(49,185,122)">5</td>
+        <td style="color:rgb(124,222,252)">6</td>
+      </tr>
+      <tr>
+        <td style="color:rgb(114,214,248)">1</td>
+        <td style="color:rgb(250,239,50)">2</td>
+        <td style="color:rgb(2,65,110)">3</td>
+        <td rowspan="2" style="color:rgb(127,227,253)">=</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="color:rgb(255,108,83)">0</td>
+        <td style="color:rgb(246,238,89)">.</td>
+      </tr>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="./jquery-3.6.4.min.js"></script>
+  <script>
+    const text = document.getElementById('text')
+    const btns = document.querySelectorAll('td:not(#text):not(#clickMe):not(#el2):not(#hr)')
+    for (const btn of btns) {
+
+
+
+      btn.addEventListener('click', () => {
+        /* btn.style.border='inset' */
+        const btnText = btn.innerText
+        const operators = ['+', '-', '*', '/']
+        const lastText = text.innerText[text.innerText.length - 1]
+        // 如果按的鍵是 =
+        if (btnText === '=') {
+          // 如果最後一個字不是運算子，才計算
+          if (!operators.includes(lastText)) {
+            text.innerText = eval(text.innerText)
+          }
+        }
+        // 如果按 C，歸 0
+        else if (btnText === 'C') {
+          text.innerText = '0'
+        }
+        else if (text.innerText.length >= 16) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '16 Digits Only!',
+          })
+          // } else {
+          //   text.innerText += ''
+        }
+        // 如果現在是 0，按的是數字，把文字取代
+        else if (text.innerText === '0' && !isNaN(parseInt(btnText))) {
+          text.innerText = btnText
+        }
+        // 如果最後一個字是運算子
+        else if (operators.includes(lastText)) {
+          // 現在按的不是運算子，才加上去
+          if (!operators.includes(btnText)) {
+            text.innerText += btnText
+          }
+        }
+        // 如果按的是 .
+        else if (btnText === '.') {
+          let canAddDot = true
+          // 從最後一個字往前跑迴圈
+          for (let i = text.innerText.length - 1; i >= 0; i--) {
+            // 如果先遇到運算子，一定可以加 .
+            if (operators.includes(text.innerText[i])) break
+            // 如果先遇到 .，一定不能加 .
+            if (text.innerText[i] === '.') {
+              canAddDot = false
+              break
+            }
+          }
+          // 迴圈完可以加才
+          if (canAddDot) text.innerText += '.'
+        }
+        // 如果最後一個字不是運算子，加上去
+
+        else
+          // { text.innerText += btnText }
+          text.innerText += btnText
+
+
+
+
+      })
+      btn.addEventListener('mousedown', function () {
+        console.log(123)
+        btn.style.border = 'inset'
+      })
+      btn.addEventListener('mouseup', function () {
+        btn.style.border = 'outset'
+      })
+    }
+
+    document.addEventListener('keydown', event => {
+      const btnText = event.key
+      const operators = ['+', '-', '*', '/']
+      const lastText = text.innerText[text.innerText.length - 1]
+      // 如果按的鍵是 =
+      if (btnText === '=' || btnText === 'Enter') {
+        // 如果最後一個字不是運算子，才計算
+        if (!operators.includes(lastText)) {
+          text.innerText = eval(text.innerText)
+        }
+      }
+      // 如果按 C，歸 0
+      else if (btnText === 'c') {
+        text.innerText = '0'
+      }
+      else if (text.innerText.length >= 16) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '16 Digits Only!',
+        })
+        // } else {
+        //   text.innerText += ''
+      }
+      // 如果現在是 0，按的是數字，把文字取代
+      else if (text.innerText === '0' && !isNaN(parseInt(btnText))) {
+        text.innerText = btnText
+      }
+      // 如果最後一個字是運算子
+      else if (operators.includes(lastText)) {
+        // 現在按的不是運算子，且是數字才加上去
+        if (!operators.includes(btnText) && !isNaN(parseInt(btnText))) {
+          text.innerText += btnText
+        }
+      }
+      // 如果最後一個字不是運算子，且按的是數字或運算子，加上去
+      else if (!isNaN(parseInt(btnText)) || operators.includes(btnText)) {
+        text.innerText += btnText
+      }
+      // 如果按的是 .
+      else if (btnText === '.') {
+        let canAddDot = true
+        // 從最後一個字往前跑迴圈
+        for (let i = text.innerText.length - 1; i >= 0; i--) {
+          // 如果先遇到運算子，一定可以加 .
+          if (operators.includes(text.innerText[i])) break
+          // 如果先遇到 .，一定不能加 .
+          if (text.innerText[i] === '.') {
+            canAddDot = false
+            break
+          }
+        }
+        // 迴圈完可以加才
+        if (canAddDot) text.innerText += '.'
+      }
+      else
+
+        text.innerText += btnText
+
+    })
+
+    const clickMe = document.getElementById('clickMe')
+    const table = document.getElementById('table')
+
+    clickMe.addEventListener('click', function () {
+      if (table.classList.contains("animate__bounceIn")) {
+
+        table.classList.remove("animate__bounceIn")
+        setTimeout(function () {
+          table.classList.add("animate__bounceIn")
+        }, 10)
+      }
+      else { table.classList.add("animate__bounceIn") }
+    })
+
+
+  </script>
+</body>
+
+</html>
